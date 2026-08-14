@@ -1,3 +1,477 @@
-<iframe src="https://www.sondehub.org/#!mt=Mapnik&mz=13&qm=3h&mc=40.71005,-79.53449&box=aboutbox"
-        style="width:100%;height:600px;border:0;"
-        loading="lazy"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KD3CLW — Stations & Projects</title>
+<meta name="description" content="KD3CLW — amateur radio operator in western Pennsylvania. Live radiosonde tracking, band-condition apps, and RF projects.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --void:#0a0e14;
+    --panel:#131c26;
+    --panel-2:#0f1720;
+    --edge:#25323f;
+    --edge-soft:#1b2530;
+    --amber:#ffab40;
+    --amber-dim:#c77f2e;
+    --teal:#40d0c8;
+    --text:#e8eef4;
+    --muted:#8a97a4;
+
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --mono:'Space Mono',ui-monospace,monospace;
+    --body:'Inter',system-ui,sans-serif;
+
+    --max:1080px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--void);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  a{color:var(--teal);text-decoration:none;}
+  a:hover{text-decoration:underline;text-underline-offset:3px;}
+
+  :focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--amber-dim);
+    margin:0;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    border-bottom:1px solid var(--edge-soft);
+    overflow:hidden;
+  }
+  .scope{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    opacity:.55;
+  }
+  .hero::after{ /* fade the scope into the content */
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(10,14,20,.15) 0%,rgba(10,14,20,.55) 55%,var(--void) 100%);
+    pointer-events:none;
+  }
+  .hero-inner{
+    position:relative;
+    z-index:2;
+    max-width:var(--max);
+    margin:0 auto;
+    padding:112px 28px 84px;
+  }
+  .status{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+    border:1px solid var(--edge);
+    background:rgba(15,23,32,.6);
+    padding:6px 12px;
+    border-radius:999px;
+    backdrop-filter:blur(4px);
+  }
+  .pulse{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 0 0 rgba(255,171,64,.6);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(255,171,64,.55);}
+    70%{box-shadow:0 0 0 9px rgba(255,171,64,0);}
+    100%{box-shadow:0 0 0 0 rgba(255,171,64,0);}
+  }
+  .call{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(3.2rem,12vw,7rem);
+    letter-spacing:.04em;
+    margin:22px 0 0;
+    line-height:1;
+    color:var(--text);
+    text-shadow:0 0 30px rgba(255,171,64,.12);
+  }
+  .call span{color:var(--amber);}
+  .tagline{
+    max-width:52ch;
+    font-size:1.12rem;
+    color:var(--muted);
+    margin:20px 0 0;
+  }
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 10px;
+    margin-top:26px;
+    font-family:var(--mono);
+    font-size:.78rem;
+  }
+  .chip{
+    border:1px solid var(--edge);
+    border-radius:4px;
+    padding:5px 10px;
+    color:var(--muted);
+  }
+  .chip b{color:var(--text);font-weight:700;}
+
+  /* ---------- MAIN ---------- */
+  main{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:64px 28px 40px;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--edge-soft);
+  }
+  .section-head h2{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(1.5rem,4vw,2rem);
+    margin:6px 0 0;
+    letter-spacing:-.01em;
+  }
+  .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);}
+
+  /* Featured live panel */
+  .feature{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);
+    border:1px solid var(--edge);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .feature-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    padding:22px 24px 16px;
+  }
+  .feature-head h3{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:1.5rem;
+    margin:6px 0 6px;
+  }
+  .feature-head p{margin:0;color:var(--muted);max-width:60ch;font-size:.98rem;}
+  .live-badge{
+    flex:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-size:.7rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--teal);
+    border:1px solid rgba(64,208,200,.4);
+    background:rgba(64,208,200,.07);
+    padding:6px 11px;
+    border-radius:999px;
+  }
+  .live-badge .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--teal);
+    animation:blink 1.6s steps(1) infinite;
+  }
+  @keyframes blink{0%,60%{opacity:1;}61%,100%{opacity:.25;}}
+
+  .map-frame{
+    position:relative;
+    margin:6px 16px 16px;
+    border:1px solid var(--edge);
+    border-radius:8px;
+    overflow:hidden;
+    background:var(--void);
+  }
+  .map-frame iframe{
+    width:100%;
+    height:600px;
+    border:0;
+    display:block;
+  }
+  .caption{
+    font-family:var(--mono);
+    font-size:.76rem;
+    color:var(--muted);
+    padding:0 24px 20px;
+    margin:0;
+  }
+  .caption a{color:var(--amber);}
+
+  /* Secondary project cards */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
+    margin-top:20px;
+  }
+  .card{
+    display:flex;
+    flex-direction:column;
+    background:var(--panel);
+    border:1px solid var(--edge-soft);
+    border-radius:12px;
+    padding:22px 22px 20px;
+    transition:border-color .2s ease,transform .2s ease;
+  }
+  .card:hover{border-color:var(--amber-dim);transform:translateY(-3px);}
+  .card .eyebrow{margin-bottom:12px;}
+  .card h3{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:1.25rem;
+    margin:0 0 8px;
+  }
+  .card p{margin:0 0 18px;color:var(--muted);font-size:.96rem;flex:1;}
+  .card-link{
+    font-family:var(--mono);
+    font-size:.8rem;
+    letter-spacing:.04em;
+    color:var(--amber);
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+  }
+  .card-link::after{content:"→";transition:transform .2s ease;}
+  .card:hover .card-link::after{transform:translateX(4px);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    max-width:var(--max);
+    margin:40px auto 0;
+    padding:28px;
+    border-top:1px solid var(--edge-soft);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px 24px;
+    flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:.78rem;
+    color:var(--muted);
+  }
+  footer nav{display:flex;gap:18px;flex-wrap:wrap;}
+
+  @media (max-width:560px){
+    .hero-inner{padding:88px 22px 64px;}
+    main{padding:48px 22px 32px;}
+    .map-frame iframe{height:460px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <canvas class="scope" id="scope" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <span class="status"><span class="pulse" aria-hidden="true"></span>Station online</span>
+      <h1 class="call"><span>KD3</span>CLW</h1>
+      <p class="tagline">Amateur radio operator and RF tinkerer in western Pennsylvania. Live receivers and projects, monitored from the bench.</p>
+      <div class="meta">
+        <span class="chip">GRID <b>EN90</b></span>
+        <span class="chip">CLASS <b>General</b></span>
+        <span class="chip">QTH <b>Western PA</b></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="projects-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Active</p>
+          <h2 id="projects-title">Stations &amp; projects</h2>
+        </div>
+        <span class="count">3 online</span>
+      </div>
+
+      <!-- ============ FEATURED: SONDEHUB ============ -->
+      <article class="feature">
+        <div class="feature-head">
+          <div>
+            <p class="eyebrow">Radiosonde tracking</p>
+            <h3>SondeHub</h3>
+            <p>My <code>radiosonde_auto_rx</code> receiver on a Raspberry Pi, decoding NWS Pittsburgh radiosonde launches and feeding SondeHub as KD3CLW. Live map, centered on the node.</p>
+          </div>
+          <span class="live-badge"><span class="dot" aria-hidden="true"></span>Live feed</span>
+        </div>
+        <div class="map-frame">
+          <iframe src="https://www.sondehub.org/#!mt=Mapnik&mz=13&qm=3h&mc=40.71005,-79.53449&box=aboutbox"
+                  title="SondeHub live radiosonde map centered on KD3CLW"
+                  loading="lazy"></iframe>
+        </div>
+        <p class="caption">Receiving NWS PGH sondes · open the full tracker at <a href="https://sondehub.org" target="_blank" rel="noopener">sondehub.org</a></p>
+      </article>
+
+      <!-- ============ SECONDARY CARDS ============ -->
+      <div class="grid">
+
+        <!-- HamBands -->
+        <article class="card">
+          <p class="eyebrow">iOS · watchOS</p>
+          <h3>HamBands</h3>
+          <p>An app that shows real-time HF band conditions from NOAA solar data — trend charts, a greyline visualizer, watch complications, and home-screen widgets.</p>
+          <!-- TODO: paste your App Store link here -->
+          <a class="card-link" href="#" target="_blank" rel="noopener">View on the App Store</a>
+        </article>
+
+        <!-- Pico balloon -->
+        <article class="card">
+          <p class="eyebrow">WSPR · Telemetry</p>
+          <h3>Pico balloon</h3>
+          <p>A Traquito Jetpack pico-balloon build — a lightweight solar WSPR transmitter for tracking a floating station around the globe. In progress on the bench.</p>
+          <!-- TODO: link to your WSPR spots / Traquito tracker, or delete this line -->
+          <a class="card-link" href="https://traquito.github.io" target="_blank" rel="noopener">About the project</a>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>KD3CLW · EN90 · Western PA</span>
+    <nav>
+      <a href="https://www.qrz.com/db/KD3CLW" target="_blank" rel="noopener">QRZ</a>
+      <a href="https://sondehub.org" target="_blank" rel="noopener">SondeHub</a>
+      <!-- Add GitHub / other links here -->
+    </nav>
+  </footer>
+
+<script>
+/* Ambient bandscope: a slow noise floor with a few drifting signal peaks.
+   Static single-frame render when the visitor prefers reduced motion. */
+(function(){
+  const canvas = document.getElementById('scope');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, dpr;
+
+  const AMBER = '255,171,64';
+  const TEAL  = '64,208,200';
+
+  // A few "signals" that drift across the band.
+  const peaks = [
+    {x:0.18, amp:0.62, wob:0.00035, phase:0.0, col:AMBER},
+    {x:0.44, amp:0.85, wob:0.00021, phase:1.7, col:AMBER},
+    {x:0.63, amp:0.50, wob:0.00048, phase:3.1, col:TEAL},
+    {x:0.82, amp:0.72, wob:0.00028, phase:0.9, col:AMBER}
+  ];
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function gauss(x, cx, width){
+    const d = (x-cx)/width;
+    return Math.exp(-d*d);
+  }
+
+  function draw(t){
+    ctx.clearRect(0,0,w,h);
+
+    // faint grid lines (bandscope graticule)
+    ctx.strokeStyle = 'rgba(80,100,120,0.10)';
+    ctx.lineWidth = 1;
+    for(let i=1;i<10;i++){
+      const gx = (w/10)*i;
+      ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke();
+    }
+
+    const base = h*0.92;      // noise-floor baseline
+    const step = 2;
+    const pts = [];
+
+    for(let px=0; px<=w; px+=step){
+      const x = px/w;
+      // low noise floor
+      let y = 0.06 + 0.02*Math.sin(px*0.05 + t*0.0012);
+      // add drifting peaks
+      for(const p of peaks){
+        const cx = p.x + Math.sin(t*p.wob + p.phase)*0.05;
+        const amp = p.amp * (0.8 + 0.2*Math.sin(t*0.0016 + p.phase*2));
+        y += amp * gauss(x, cx, 0.035);
+      }
+      y = Math.min(y,1);
+      pts.push([px, base - y*(h*0.72)]);
+    }
+
+    // filled spectrum
+    const grad = ctx.createLinearGradient(0,0,0,h);
+    grad.addColorStop(0, 'rgba('+AMBER+',0.30)');
+    grad.addColorStop(1, 'rgba('+AMBER+',0.02)');
+    ctx.beginPath();
+    ctx.moveTo(0, base);
+    for(const [px,py] of pts) ctx.lineTo(px,py);
+    ctx.lineTo(w, base);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // trace line on top
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for(const [px,py] of pts) ctx.lineTo(px,py);
+    ctx.strokeStyle = 'rgba('+AMBER+',0.65)';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+  }
+
+  function loop(t){ draw(t); requestAnimationFrame(loop); }
+
+  resize();
+  window.addEventListener('resize', resize);
+  if(reduce){ draw(2200); }         // one representative frame
+  else { requestAnimationFrame(loop); }
+})();
+</script>
+</body>
+</html>
