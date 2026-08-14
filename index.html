@@ -350,7 +350,7 @@
       <h3>HamBands <span class="new">NEW!</span></h3>
       <p>An app that shows real-time HF band conditions from NOAA solar data &mdash; trend charts, a greyline visualizer, watch complications, and home-screen widgets.</p>
       <!-- TODO: paste your App Store link here -->
-      <a class="goto" href="https://apps.apple.com/ca/app/hamband/id6772585467" target="_blank" rel="noopener">Get it! &raquo;</a>
+      <a class="goto" href="https://apps.apple.com/us/app/hambands/id1556521300" target="_blank" rel="noopener">Get it! &raquo;</a>
     </div>
 
     <!-- Pico balloon -->
@@ -369,11 +369,10 @@
   <!-- ===== COUNTER + GUESTBOOK ===== -->
   <div class="strip">
     You are visitor number
-    <span class="counter" aria-hidden="true"><b>0</b><b>0</b><b>1</b><b>3</b><b>3</b><b>7</b></span>
+    <span class="counter" id="counter" role="status" aria-label="page visit counter"><b>0</b><b>0</b><b>0</b><b>0</b><b>0</b><b>0</b></span>
   </div>
   <div class="strip">
-    <!-- TODO: swap in your own email for the guestbook link -->
-    <a class="guestbtn" href="mailto:kd3clw@example.com?subject=Saw%20your%20homepage!">&#9993; Sign my Guestbook</a>
+    <a class="guestbtn" href="mailto:taylor.transue@pm.me?subject=Saw%20your%20KD3CLW%20homepage!">&#9993; Sign my Guestbook</a>
   </div>
 
   <!-- ===== 88x31 BADGE ROW ===== -->
@@ -396,5 +395,32 @@
   </footer>
 
 </div>
+
+<script>
+/* ---- Real visitor counter via Abacus (free counting API, no signup) ----
+   Counts one page view per load and displays the running total in the
+   odometer above. The counter is created automatically on the first hit.
+   Docs: https://abacus.jasoncameron.dev
+   NOTE: set NAMESPACE to the domain you actually publish on so the count
+   stays tied to this site (e.g. "kd3clw.github.io" or your custom domain). */
+(function(){
+  var NAMESPACE = "kd3clw.github.io";  // <-- change to your live domain
+  var KEY = "home";
+  var el = document.getElementById("counter");
+  if(!el) return;
+
+  function render(n){
+    var s = String(Math.max(0, n|0)).padStart(6, "0");
+    el.innerHTML = s.split("").map(function(d){ return "<b>" + d + "</b>"; }).join("");
+  }
+
+  fetch("https://abacus.jasoncameron.dev/hit/" + NAMESPACE + "/" + KEY)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && typeof data.value === "number") render(data.value);
+    })
+    .catch(function(){ /* offline / blocked: leave the placeholder zeros */ });
+})();
+</script>
 </body>
 </html>
