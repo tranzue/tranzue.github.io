@@ -3,423 +3,363 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>~ KD3CLW's Ham Radio Homepage ~</title>
-<meta name="description" content="KD3CLW's home on the World Wide Web - amateur radio, live radiosonde tracking, and RF projects from western Pennsylvania. 73!">
+<title>KD3CLW — station &amp; projects</title>
+<meta name="description" content="KD3CLW, amateur radio operator in western Pennsylvania. A live radiosonde receiver, an HF band-conditions app, and a pico-balloon build.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-  /* =========================================================
-     KD3CLW HOMEPAGE  ::  best viewed in Netscape Navigator @ 800x600
-     ========================================================= */
-
   :root{
-    --lime:#00ff66;
-    --cyan:#00ffff;
-    --yellow:#ffff00;
-    --magenta:#ff33cc;
-    --navy:#000044;
-    --panel:#0a0a3d;
-    --silver:#c0c0c0;
+    --paper:#f4f5f2;
+    --paper-2:#fbfbf9;
+    --ink:#17191c;
+    --muted:#565b5f;
+    --line:#d9dbd5;
+    --line-soft:#e6e7e2;
+    --signal:#e8590c;
+    --signal-ink:#b8480a;
+    --quiet:#7c8288;
+
+    --sans:'Archivo',system-ui,-apple-system,sans-serif;
+    --mono:'Space Mono',ui-monospace,SFMono-Regular,monospace;
+
+    --max:960px;
   }
 
+  *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    padding:14px 8px 40px;
-    color:#e8e8ff;
-    font-family:"Times New Roman",Times,serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
     font-size:17px;
-    line-height:1.5;
-    background-color:#000010;
-    /* tiled starfield */
-    background-image:
-      radial-gradient(1.5px 1.5px at 20px 30px,#ffffff,transparent),
-      radial-gradient(1.5px 1.5px at 90px 70px,#88aaff,transparent),
-      radial-gradient(1px 1px at 140px 120px,#ffffcc,transparent),
-      radial-gradient(1.5px 1.5px at 50px 160px,#ffffff,transparent),
-      radial-gradient(1px 1px at 175px 40px,#66ffcc,transparent);
-    background-size:200px 200px;
-    background-repeat:repeat;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
   }
 
-  a{color:var(--cyan);}
-  a:visited{color:var(--magenta);}
-  a:hover{color:var(--yellow);background:#000;}
-  :focus-visible{outline:3px dotted var(--yellow);outline-offset:2px;}
+  a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .15s ease,color .15s ease;}
+  a:hover{color:var(--signal-ink);border-color:var(--signal);}
 
-  .page{
-    max-width:780px;
-    margin:0 auto;
-  }
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:2px;}
 
-  /* ---- scrolling ticker (CSS marquee) ---- */
-  .ticker{
-    border:3px ridge var(--lime);
-    background:#001a00;
-    overflow:hidden;
-    white-space:nowrap;
-    color:var(--lime);
-    font-family:"VT323",monospace;
-    font-size:1.5rem;
-    letter-spacing:1px;
-    padding:4px 0;
-    margin-bottom:16px;
-  }
-  .ticker span{
-    display:inline-block;
-    padding-left:100%;
-    animation:scroll 22s linear infinite;
-  }
-  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-100%);}}
+  code{font-family:var(--mono);font-size:.86em;background:var(--line-soft);padding:1px 5px;border-radius:3px;}
 
-  /* ---- header ---- */
-  .masthead{
-    text-align:center;
-    border:5px ridge var(--yellow);
-    background:
-      repeating-linear-gradient(45deg,#000044 0 14px,#00003a 14px 28px);
-    padding:26px 14px 22px;
-    margin-bottom:6px;
-  }
-  .callsign{
-    font-family:"Press Start 2P",monospace;
-    font-size:clamp(1.6rem,7vw,3.2rem);
-    color:var(--yellow);
-    margin:0;
-    line-height:1.25;
-    text-shadow:3px 3px 0 var(--magenta),6px 6px 0 #660033;
-  }
-  .callsign .lo{color:var(--cyan);}
-  .subhead{
-    font-family:"VT323",monospace;
-    font-size:1.6rem;
-    color:var(--lime);
-    margin:14px 0 4px;
-  }
-  .onair{
-    display:inline-block;
-    color:#ff2222;
-    font-family:"Press Start 2P",monospace;
-    font-size:.7rem;
-    animation:blink 1.1s steps(1) infinite;
-  }
-  @keyframes blink{50%{opacity:0;}}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;}
 
-  .badgebar{
-    margin:14px 0 0;
-    font-family:"VT323",monospace;
-    font-size:1.3rem;
-  }
-  .rbadge{
-    display:inline-block;
-    border:3px outset var(--silver);
-    background:#000;
-    color:var(--cyan);
-    padding:2px 10px;
-    margin:3px 4px;
-  }
-  .rbadge b{color:var(--yellow);}
+  /* ---------- HERO / STATION PLATE ---------- */
+  .plate{padding:88px 0 40px;}
 
-  /* ---- rainbow divider (the animated-GIF hr) ---- */
-  .rainbow{
-    height:6px;border:0;margin:18px 0;
-    background:linear-gradient(90deg,#ff0000,#ff9900,#ffff00,#00ff00,#00ffff,#0066ff,#cc00ff,#ff0000);
-    background-size:200% 100%;
-    animation:slide 4s linear infinite;
-  }
-  @keyframes slide{to{background-position:200% 0;}}
-
-  /* ---- retro "window" panels ---- */
-  .window{
-    border:3px outset var(--silver);
-    background:var(--panel);
-    margin:0 0 20px;
-  }
-  .titlebar{
-    background:linear-gradient(90deg,#000080,#1084d0);
-    color:#fff;
-    font-family:"VT323",monospace;
-    font-size:1.35rem;
-    font-weight:bold;
-    padding:4px 8px;
+  .whoami{
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--muted);
     display:flex;
     align-items:center;
+    gap:11px;
+    margin:0 0 26px;
+  }
+  .onair{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--signal-ink);
+    font-weight:700;
+  }
+  .onair .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 0 0 rgba(232,89,12,.5);
+    animation:ping 2.6s ease-out infinite;
+  }
+  @keyframes ping{
+    0%{box-shadow:0 0 0 0 rgba(232,89,12,.45);}
+    70%{box-shadow:0 0 0 8px rgba(232,89,12,0);}
+    100%{box-shadow:0 0 0 0 rgba(232,89,12,0);}
+  }
+
+  .call{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(3.4rem,15vw,8.5rem);
+    letter-spacing:.02em;
+    line-height:.92;
+    margin:0;
+  }
+
+  /* HF band dial under the callsign */
+  .dial{
+    position:relative;
+    display:flex;
     justify-content:space-between;
-    border-bottom:2px solid #000;
+    align-items:flex-end;
+    margin:18px 0 0;
+    padding:0 2px 7px;
+    border-bottom:1px solid var(--ink);
+    background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 22px);
+    background-position:bottom left;
+    background-size:100% 9px;
+    background-repeat:repeat-x;
   }
-  .titlebar .btns{letter-spacing:2px;}
-  .titlebar .btns i{
-    font-style:normal;
-    display:inline-block;
-    background:var(--silver);color:#000;
-    border:2px outset #fff;
-    padding:0 5px;margin-left:3px;font-size:.85rem;
+  .band{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:9px;
+    font-family:var(--mono);
+    font-size:.68rem;
+    color:var(--muted);
+    background:var(--paper);
+    padding:0 4px;
   }
-  .window-body{padding:16px 18px;}
+  .band .tick{width:1px;height:15px;background:var(--muted);}
+  .band .mhz{color:var(--quiet);font-size:.6rem;}
+  .band.lit{color:var(--signal-ink);font-weight:700;}
+  .band.lit .tick{background:var(--signal);height:21px;}
+  .band.lit .mhz{color:var(--signal-ink);}
 
-  .sectiontitle{
-    font-family:"Press Start 2P",monospace;
-    color:var(--lime);
-    font-size:1rem;
-    text-align:center;
-    margin:26px 0 10px;
-    text-shadow:2px 2px 0 #003311;
+  .tagline{
+    max-width:56ch;
+    font-size:1.16rem;
+    color:var(--ink);
+    margin:34px 0 0;
   }
+  .tagline .who{color:var(--muted);}
 
-  h3{
-    font-family:"VT323",monospace;
-    color:var(--yellow);
-    font-size:1.8rem;
-    margin:0 0 6px;
+  /* logbook field line */
+  .fields{
+    display:flex;
+    flex-wrap:wrap;
+    gap:22px;
+    margin:26px 0 0;
+    font-family:var(--mono);
+    font-size:.82rem;
   }
-  .eyebrow{
-    font-family:"VT323",monospace;
-    color:var(--cyan);
-    font-size:1.2rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
+  .fields .f{color:var(--quiet);}
+  .fields .f b{color:var(--ink);font-weight:700;margin-left:6px;}
+
+  /* ---------- SECTION ---------- */
+  section{padding:38px 0;}
+  .sec-title{
+    font-family:var(--sans);
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:.02em;
     margin:0 0 4px;
   }
-  .window-body p{margin:0 0 12px;}
-  code{color:var(--lime);font-family:"Courier New",monospace;}
+  .sec-note{font-family:var(--mono);font-size:.76rem;color:var(--quiet);margin:0 0 26px;}
 
-  .new{
-    color:#ff2222;font-family:"Press Start 2P",monospace;font-size:.55rem;
-    vertical-align:middle;margin-left:6px;
-    animation:blink 1.1s steps(1) infinite;
+  /* status tag */
+  .tag{
+    display:inline-flex;align-items:center;gap:7px;
+    font-family:var(--mono);font-size:.68rem;font-weight:700;
+    letter-spacing:.04em;
+    color:var(--muted);
   }
+  .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--quiet);}
+  .tag.live{color:var(--signal-ink);} .tag.live::before{background:var(--signal);}
+  .tag.build{color:var(--signal-ink);} .tag.build::before{background:var(--signal);box-shadow:inset 0 0 0 1.5px var(--paper-2),0 0 0 1.5px var(--signal);}
+  .tag.ship::before{background:var(--ink);}
 
-  /* ---- SondeHub browser-window frame ---- */
-  .browser .urlbar{
-    background:var(--silver);
-    border-bottom:2px inset #fff;
-    padding:5px 8px;
-    font-family:"Courier New",monospace;
-    font-size:.85rem;
-    color:#000;
-  }
-  .browser .urlbar span{
-    display:block;
-    background:#fff;
-    border:2px inset var(--silver);
-    padding:2px 6px;
-    color:#000066;
+  /* ---------- FEATURED ENTRY ---------- */
+  .feature{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-top:3px solid var(--signal);
+    border-radius:6px;
     overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
   }
-  .map-frame{
-    background:#000;
-    padding:6px;
+  .feature .head{padding:24px 26px 18px;}
+  .feature h3{
+    font-family:var(--sans);font-weight:700;font-size:1.55rem;
+    margin:12px 0 10px;letter-spacing:-.01em;
   }
-  .map-frame iframe{
-    width:100%;height:600px;border:0;display:block;
-    border:2px inset var(--silver);
-  }
-  .caption{
-    font-family:"VT323",monospace;font-size:1.2rem;
-    color:var(--cyan);margin:8px 0 0;
-  }
-  .caption a{color:var(--yellow);}
+  .feature .head p{margin:0;color:var(--muted);max-width:64ch;}
+  .feature .head p code{background:var(--line-soft);}
 
-  /* ---- two project cells ---- */
-  .cells{
+  .map{
+    margin:2px 18px 18px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .map iframe{width:100%;height:580px;border:0;display:block;}
+  .cap{
+    font-family:var(--mono);font-size:.74rem;color:var(--quiet);
+    padding:0 26px 22px;margin:0;
+  }
+
+  /* ---------- ENTRY GRID ---------- */
+  .entries{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:16px;
+    gap:20px;
+    margin-top:20px;
   }
-  .cell{
-    border:3px outset var(--silver);
-    background:#00002a;
-    padding:14px 16px;
+  .entry{
+    display:flex;flex-direction:column;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-top:3px solid var(--ink);
+    border-radius:6px;
+    padding:22px 24px 22px;
+    transition:border-color .15s ease;
   }
-  .cell p{font-size:16px;}
-  .goto{
-    display:inline-block;
-    font-family:"VT323",monospace;font-size:1.3rem;
-    color:#000;background:var(--yellow);
-    border:3px outset #fff;
-    padding:2px 12px;
-    text-decoration:none;
-  }
-  .goto:hover{background:var(--lime);color:#000;}
+  .entry.hot{border-top-color:var(--signal);}
+  .entry:hover{border-color:var(--muted);}
+  .entry.hot:hover{border-color:var(--signal);}
+  .entry h3{font-family:var(--sans);font-weight:700;font-size:1.28rem;margin:12px 0 9px;}
+  .entry p{margin:0 0 20px;color:var(--muted);font-size:.98rem;flex:1;}
+  .entry .links{display:flex;gap:18px;font-family:var(--mono);font-size:.8rem;}
+  .entry .links a{border-bottom-color:var(--line);}
 
-  /* ---- counter + guestbook ---- */
-  .strip{
-    text-align:center;
-    font-family:"VT323",monospace;
-    font-size:1.35rem;
-    color:var(--lime);
-    margin:6px 0 4px;
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line);margin-top:24px;}
+  .foot{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:18px 28px;flex-wrap:wrap;
+    padding:26px 0 12px;
+    font-family:var(--mono);font-size:.8rem;color:var(--muted);
   }
+  .foot nav{display:flex;gap:20px;flex-wrap:wrap;}
+  .foot nav a{border-bottom-color:var(--line);}
   .counter{
-    display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px;
+    padding:0 0 40px;
+    font-family:var(--mono);font-size:.76rem;color:var(--quiet);
+    display:flex;align-items:center;gap:9px;
   }
-  .counter b{
-    background:#000;color:#00ff00;
-    border:2px inset #444;
-    font-family:"Courier New",monospace;
-    font-size:1.25rem;font-weight:bold;
-    padding:1px 5px;
-  }
-  .guestbtn{
-    display:inline-block;margin-top:10px;
-    font-family:"VT323",monospace;font-size:1.4rem;
-    color:#000;background:var(--cyan);
-    border:3px outset #fff;padding:4px 16px;text-decoration:none;
-  }
-  .guestbtn:hover{background:var(--magenta);color:#fff;}
+  .counter .n{color:var(--ink);letter-spacing:.14em;}
 
-  /* ---- footer ---- */
-  footer{
-    text-align:center;
-    font-family:"VT323",monospace;
-    font-size:1.25rem;
-    color:#aab;
-    border-top:2px groove var(--silver);
-    margin-top:22px;padding-top:14px;
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:640px){
+    body{font-size:16px;}
+    .wrap{padding:0 20px;}
+    .plate{padding:64px 0 28px;}
+    .entries{grid-template-columns:1fr;}
+    .map iframe{height:440px;}
+    .band .mhz{display:none;}
+    .tagline{font-size:1.06rem;}
   }
-  footer a{color:var(--cyan);margin:0 8px;}
 
-  @media (max-width:560px){
-    .cells{grid-template-columns:1fr;}
-    .map-frame iframe{height:440px;}
-    .titlebar{font-size:1.1rem;}
-  }
   @media (prefers-reduced-motion:reduce){
-    *{animation:none !important;}
-    .ticker span{padding-left:0;}
+    *{animation:none!important;}
     html{scroll-behavior:auto;}
   }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- ===== TICKER ===== -->
-  <div class="ticker" aria-hidden="true">
-    <span>&#9733; WELCOME TO KD3CLW'S HOME ON THE WORLD WIDE WEB &#9733; NOW WITH LIVE RADIOSONDE TRACKING &#9733; THANKS FOR STOPPING BY &#9733; 73 DE KD3CLW &#9733;</span>
-  </div>
+  <header class="plate wrap">
+    <p class="whoami">
+      <span class="onair"><span class="dot" aria-hidden="true"></span>on air</span>
+      <span aria-hidden="true">·</span>
+      station of Taylor Transue
+    </p>
 
-  <!-- ===== MASTHEAD ===== -->
-  <div class="masthead">
-    <h1 class="callsign"><span class="lo">KD3</span>CLW</h1>
-    <p class="subhead">~ Amateur Radio &amp; RF Projects from Western Pennsylvania ~</p>
-    <div><span class="onair">&#9679; ON THE AIR &#9679;</span></div>
-    <div class="badgebar">
-      <span class="rbadge">GRID <b>EN90</b></span>
-      <span class="rbadge">CLASS <b>General</b></span>
-      <span class="rbadge">QTH <b>Western PA</b></span>
+    <h1 class="call">KD3CLW</h1>
+
+    <div class="dial" role="img" aria-label="HF band dial, 20 meters highlighted">
+      <span class="band"><span class="tick"></span>80m<span class="mhz">3.5</span></span>
+      <span class="band"><span class="tick"></span>40m<span class="mhz">7.0</span></span>
+      <span class="band lit"><span class="tick"></span>20m<span class="mhz">14.0</span></span>
+      <span class="band"><span class="tick"></span>15m<span class="mhz">21.0</span></span>
+      <span class="band"><span class="tick"></span>10m<span class="mhz">28.0</span></span>
     </div>
-  </div>
 
-  <hr class="rainbow">
+    <p class="tagline">Amateur radio operator and RF tinkerer. <span class="who">A few things I keep running from the bench in western Pennsylvania.</span></p>
 
-  <p class="sectiontitle">My Active Stations &amp; Projects</p>
-
-  <!-- ===== FEATURED: SONDEHUB ===== -->
-  <div class="window browser">
-    <div class="titlebar">
-      <span>SondeHub - Live Radiosonde Tracker</span>
-      <span class="btns"><i>_</i><i>&#9633;</i><i>&#215;</i></span>
+    <div class="fields">
+      <span class="f">grid<b>EN90</b></span>
+      <span class="f">class<b>General</b></span>
+      <span class="f">qth<b>Western PA</b></span>
+      <span class="f">since<b>2018</b></span>
     </div>
-    <div class="urlbar"><span>http://www.sondehub.org/#!KD3CLW</span></div>
-    <div class="window-body" style="padding:12px 12px 16px;">
-      <p class="eyebrow">Radiosonde Tracking <span class="new">LIVE!</span></p>
-      <p>My <code>radiosonde_auto_rx</code> receiver runs on a Raspberry Pi, decoding NWS Pittsburgh radiosonde launches and feeding SondeHub as KD3CLW. Live map below, centered right on the node!</p>
-      <div class="map-frame">
-        <iframe src="https://www.sondehub.org/#!mt=Mapnik&mz=13&qm=3h&mc=40.71005,-79.53449&box=aboutbox"
-                title="SondeHub live radiosonde map centered on KD3CLW"
-                loading="lazy"></iframe>
+  </header>
+
+  <main>
+    <section class="wrap" aria-labelledby="bench">
+      <h2 class="sec-title" id="bench">On the bench</h2>
+      <p class="sec-note">three projects, one of them live below</p>
+
+      <!-- FEATURED: SondeHub -->
+      <article class="feature">
+        <div class="head">
+          <span class="tag live">live feed</span>
+          <h3>SondeHub</h3>
+          <p>A <code>radiosonde_auto_rx</code> receiver running on a Raspberry Pi, decoding the twice-daily weather-balloon launches out of NWS Pittsburgh and feeding them to SondeHub as KD3CLW. The map below is my node — whatever it's hearing right now.</p>
+        </div>
+        <div class="map">
+          <iframe src="https://www.sondehub.org/#!mt=Mapnik&mz=13&qm=3h&mc=40.71005,-79.53449&box=aboutbox"
+                  title="SondeHub live radiosonde map centered on KD3CLW"
+                  loading="lazy"></iframe>
+        </div>
+        <p class="cap">Receiving NWS Pittsburgh sondes · full tracker at <a href="https://sondehub.org" target="_blank" rel="noopener">sondehub.org</a></p>
+      </article>
+
+      <!-- SECONDARY ENTRIES -->
+      <div class="entries">
+
+        <article class="entry hot">
+          <span class="tag ship">shipped · iOS &amp; watchOS</span>
+          <h3>HamBands</h3>
+          <p>An iPhone and Apple Watch app that reads NOAA solar data and tells you which HF bands are actually open before you key up. Trend charts, a greyline view, watch complications, and home-screen widgets. Built with the POTA crowd in mind.</p>
+          <div class="links">
+            <!-- TODO: paste your App Store link in place of # -->
+            <a href="#" target="_blank" rel="noopener">App&nbsp;Store</a>
+            <a href="https://apps.apple.com/ca/app/hamband/id6772585467" target="_blank" rel="noopener">source</a>
+          </div>
+        </article>
+
+        <article class="entry hot">
+          <span class="tag build">building · WSPR</span>
+          <h3>Pico balloon</h3>
+          <p>A Traquito Jetpack build — a solar-powered WSPR beacon light enough to float a tiny station around the planet and report its own position home. On the bench for now; not yet aloft.</p>
+          <div class="links">
+            <a href="https://traquito.github.io" target="_blank" rel="noopener">about&nbsp;the&nbsp;project</a>
+          </div>
+        </article>
+
       </div>
-      <p class="caption">Receiving NWS PGH sondes &raquo; open the full tracker at <a href="https://sondehub.org" target="_blank" rel="noopener">sondehub.org</a></p>
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <hr class="rainbow">
-
-  <!-- ===== TWO PROJECT CELLS ===== -->
-  <div class="cells">
-
-    <!-- HamBands -->
-    <div class="cell">
-      <p class="eyebrow">iOS &middot; watchOS</p>
-      <h3>HamBands <span class="new">NEW!</span></h3>
-      <p>An app that shows real-time HF band conditions from NOAA solar data &mdash; trend charts, a greyline visualizer, watch complications, and home-screen widgets.</p>
-      <!-- TODO: paste your App Store link here -->
-      <a class="goto" href="https://apps.apple.com/us/app/hambands/id1556521300" target="_blank" rel="noopener">Get it! &raquo;</a>
-    </div>
-
-    <!-- Pico balloon -->
-    <div class="cell">
-      <p class="eyebrow">WSPR &middot; Telemetry</p>
-      <h3>Pico Balloon</h3>
-      <p>A Traquito Jetpack pico-balloon build &mdash; a lightweight solar WSPR transmitter for tracking a floating station around the globe. Under construction on the bench!</p>
-      <!-- TODO: link to your WSPR spots / Traquito tracker, or delete this line -->
-      <a class="goto" href="https://traquito.github.io" target="_blank" rel="noopener">Info &raquo;</a>
-    </div>
-
-  </div>
-
-  <hr class="rainbow">
-
-  <!-- ===== COUNTER + GUESTBOOK ===== -->
-  <div class="strip">
-    You are visitor number
-    <span class="counter" id="counter" role="status" aria-label="page visit counter"><b>0</b><b>0</b><b>0</b><b>0</b><b>0</b><b>0</b></span>
-  </div>
-  <div class="strip">
-    <a class="guestbtn" href="mailto:taylor.transue@pm.me?subject=Saw%20your%20KD3CLW%20homepage!">&#9993; Sign my Guestbook</a>
-  </div>
-
-  <!-- ===== 88x31 BADGE ROW ===== -->
-  <div class="strip" style="margin-top:18px;">
-    <span class="rbadge">Made with <b>Notepad</b></span>
-    <span class="rbadge">Best viewed @ <b>800&#215;600</b></span>
-    <span class="rbadge">Powered by <b>Raspberry Pi</b></span>
-    <span class="rbadge"><b>HTML</b> inside</span>
-  </div>
-
-  <!-- ===== FOOTER ===== -->
   <footer>
-    <div>KD3CLW &middot; EN90 &middot; Western PA &middot; 73!</div>
-    <div style="margin-top:6px;">
-      <a href="https://www.qrz.com/db/KD3CLW" target="_blank" rel="noopener">[ QRZ ]</a>
-      <a href="https://sondehub.org" target="_blank" rel="noopener">[ SondeHub ]</a>
-      <!-- Add GitHub / other links here -->
+    <div class="wrap">
+      <div class="foot">
+        <span>KD3CLW · EN90 · western PA</span>
+        <nav>
+          <a href="https://www.qrz.com/db/KD3CLW" target="_blank" rel="noopener">QRZ</a>
+          <a href="https://github.com/kd3clw" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://sondehub.org" target="_blank" rel="noopener">SondeHub</a>
+          <a href="mailto:taylor.transue@pm.me?subject=Saw%20your%20KD3CLW%20homepage!">leave a note in the log</a>
+        </nav>
+      </div>
+      <div class="counter">
+        <span>log</span>
+        <span class="n" id="hits">······</span>
+        <span>visitors</span>
+      </div>
     </div>
-    <div style="margin-top:8px;color:#667;">Last updated: right now &middot; This page is always under construction!</div>
   </footer>
 
-</div>
-
 <script>
-/* ---- Real visitor counter via Abacus (free counting API, no signup) ----
-   Counts one page view per load and displays the running total in the
-   odometer above. The counter is created automatically on the first hit.
-   Docs: https://abacus.jasoncameron.dev
-   NOTE: set NAMESPACE to the domain you actually publish on so the count
-   stays tied to this site (e.g. "kd3clw.github.io" or your custom domain). */
+/* Live visitor tally via Abacus (maintained successor to CountAPI).
+   No signup; the namespace self-creates on first hit. Uses whatever
+   hostname the page is served from, so it just works on any domain. */
 (function(){
-  var NAMESPACE = "kd3clw.github.io";  // <-- change to your live domain
-  var KEY = "home";
-  var el = document.getElementById("counter");
+  var el = document.getElementById('hits');
   if(!el) return;
-
-  function render(n){
-    var s = String(Math.max(0, n|0)).padStart(6, "0");
-    el.innerHTML = s.split("").map(function(d){ return "<b>" + d + "</b>"; }).join("");
-  }
-
-  fetch("https://abacus.jasoncameron.dev/hit/" + NAMESPACE + "/" + KEY)
+  var ns = (location.hostname || 'kd3clw').replace(/[^a-z0-9._-]/gi,'-');
+  fetch('https://abacus.jasoncameron.dev/hit/' + ns + '/index')
     .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data && typeof data.value === "number") render(data.value);
+    .then(function(d){
+      var v = (d && typeof d.value === 'number') ? d.value : 0;
+      el.textContent = String(v).padStart(6, '0');
     })
-    .catch(function(){ /* offline / blocked: leave the placeholder zeros */ });
+    .catch(function(){ el.textContent = '——————'; });
 })();
 </script>
 </body>
