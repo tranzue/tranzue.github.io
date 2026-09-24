@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KD3CLW — station &amp; projects</title>
-<meta name="description" content="KD3CLW, amateur radio operator in western Pennsylvania. A live radiosonde receiver, an HF band-conditions app, and a pico-balloon build.">
+<meta name="description" content="KD3CLW — amateur radio operator in western Pennsylvania. A live radiosonde receiver, an HF band-conditions app, a pico-balloon build, and wardriving.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,6 +162,8 @@
   .tag.live{color:var(--signal-ink);} .tag.live::before{background:var(--signal);}
   .tag.build{color:var(--signal-ink);} .tag.build::before{background:var(--signal);box-shadow:inset 0 0 0 1.5px var(--paper-2),0 0 0 1.5px var(--signal);}
   .tag.ship::before{background:var(--ink);}
+  /* ongoing field activity: hollow ink dot */
+  .tag.field::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--muted);}
 
   /* ---------- FEATURED ENTRY ---------- */
   .feature{
@@ -215,6 +217,13 @@
   .entry p{margin:0 0 20px;color:var(--muted);font-size:.98rem;flex:1;}
   .entry .links{display:flex;gap:18px;font-family:var(--mono);font-size:.8rem;}
   .entry .links a{border-bottom-color:var(--line);}
+
+  /* full-width entry (wardriving) */
+  .entry.wide{grid-column:1 / -1;}
+  .entry.wide p{max-width:64ch;flex:none;margin-bottom:16px;}
+  .wdg{display:inline-block;align-self:flex-start;line-height:0;border:0;}
+  .wdg img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;transition:border-color .15s ease;}
+  .wdg:hover img{border-color:var(--muted);}
 
   /* ---------- FOOTER ---------- */
   footer{border-top:1px solid var(--line);margin-top:24px;}
@@ -275,21 +284,21 @@
       <span class="f">grid<b>EN90</b></span>
       <span class="f">class<b>General</b></span>
       <span class="f">qth<b>Western PA</b></span>
-      <span class="f">since<b>2025</b></span>
+      <span class="f">since<b>2018</b></span>
     </div>
   </header>
 
   <main>
     <section class="wrap" aria-labelledby="bench">
       <h2 class="sec-title" id="bench">On the bench</h2>
-      <p class="sec-note">three projects, one of them live below</p>
+      <p class="sec-note">four projects, one of them live below</p>
 
       <!-- FEATURED: SondeHub -->
       <article class="feature">
         <div class="head">
           <span class="tag live">live feed</span>
           <h3>SondeHub</h3>
-          <p>A <code>radiosonde_auto_rx</code> receiver running on a Raspberry Pi, decoding the twice-daily weather-balloon launches out of NWS Pittsburgh and feeding them to SondeHub as KD3CLW. The map below is my node, whatever it's hearing right now.</p>
+          <p>A <code>radiosonde_auto_rx</code> receiver running on a Raspberry Pi, decoding the twice-daily weather-balloon launches out of NWS Pittsburgh and feeding them to SondeHub as KD3CLW. The map below is my node — whatever it's hearing right now.</p>
         </div>
         <div class="map">
           <iframe src="https://www.sondehub.org/#!mt=Mapnik&mz=13&qm=3h&mc=40.71005,-79.53449&box=aboutbox"
@@ -308,8 +317,8 @@
           <p>An iPhone and Apple Watch app that reads NOAA solar data and tells you which HF bands are actually open before you key up. Trend charts, a greyline view, watch complications, and home-screen widgets. Built with the POTA crowd in mind.</p>
           <div class="links">
             <!-- TODO: paste your App Store link in place of # -->
-            <a href="https://apps.apple.com/ca/app/hamband/id6772585467" target="_blank" rel="noopener">App&nbsp;Store</a>
-            <a href="https://github.com/tranzue/HamBands" target="_blank" rel="noopener">source</a>
+            <a href="https://apps.apple.com/us/app/hamband/id6772585467" target="_blank" rel="noopener">App&nbsp;Store</a>
+            <a href="https://github.com/kd3clw/HamBands" target="_blank" rel="noopener">source</a>
           </div>
         </article>
 
@@ -320,6 +329,17 @@
           <div class="links">
             <a href="https://traquito.github.io" target="_blank" rel="noopener">about&nbsp;the&nbsp;project</a>
           </div>
+        </article>
+
+        <article class="entry wide">
+          <span class="tag field">ongoing · wardriving</span>
+          <h3>Wardriving</h3>
+          <p>The radio doesn't stop at HF when I'm on the road. I like to wardrive, logging the Wi-Fi around me as I go and adding it to a shared map. My sightings count toward WDGWars, a community wardriving game and leaderboard. Here's where my tally stands.</p>
+          <a class="wdg" href="https://wdgwars.pl/" target="_blank" rel="noopener">
+            <img src="https://wdgwars.pl/card/1548-E4D3H36R.svg"
+                 alt="KD3CLW's WDGWars wardriving stats card"
+                 width="480" height="200" loading="lazy">
+          </a>
         </article>
 
       </div>
@@ -334,6 +354,7 @@
           <a href="https://www.qrz.com/db/KD3CLW" target="_blank" rel="noopener">QRZ</a>
           <a href="https://github.com/kd3clw" target="_blank" rel="noopener">GitHub</a>
           <a href="https://sondehub.org" target="_blank" rel="noopener">SondeHub</a>
+          <a href="https://wdgwars.pl/" target="_blank" rel="noopener">WDGWars</a>
           <a href="mailto:taylor.transue@pm.me?subject=Saw%20your%20KD3CLW%20homepage!">leave a note in the log</a>
         </nav>
       </div>
