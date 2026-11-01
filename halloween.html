@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halloween Tracker — KD3CLW</title>
+<meta name="description" content="Trick-or-treat candy haul, tracked year over year: 2025 vs 2026.">
+<meta name="color-scheme" content="light">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#e7eaec;
+    --panel:#ffffff;
+    --ink:#0f1a24;
+    --muted:#566470;
+    --quiet:#8994a0;
+    --line:#d2d7db;
+    --well:#f3f5f6;
+
+    /* the two years: each color means one year, everywhere on the page */
+    --y25:#6b4fa8;
+    --y26:#e2650f;
+    --up:#1c9a69;
+    --down:#c2412d;
+
+    /* categories */
+    --c-choc:#6b3f24;
+    --c-fruity:#d64f8a;
+    --c-salty:#d9a21b;
+    --c-treat:#3f8fb5;
+
+    --sans:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
+
+    --max:1240px;
+    --gap:16px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+  }
+  a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .15s ease;}
+  a:hover{border-color:var(--ink);}
+  :focus-visible{outline:2px solid var(--y26);outline-offset:3px;border-radius:3px;}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px;}
+
+  /* ---------- TOP ---------- */
+  .back{display:inline-block;margin-top:28px;font-size:.92rem;font-weight:500;color:var(--muted);}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px 40px;padding:18px 0 22px;}
+  .id{display:flex;align-items:center;gap:18px;}
+  .id svg{flex:none;width:58px;height:58px;}
+  .id h1{font-family:var(--cond);font-weight:700;font-size:clamp(2.3rem,6vw,3.4rem);line-height:1;margin:0;}
+  .id p{margin:8px 0 0;color:var(--muted);font-size:1.05rem;max-width:60ch;}
+  .key{display:flex;gap:18px;font-size:.9rem;font-weight:500;}
+  .key span{display:inline-flex;align-items:center;gap:7px;}
+  .key i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+
+  /* ---------- STAT STRIP ---------- */
+  .strip{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+    margin:0 0 var(--gap);
+  }
+  .strip .s{padding:16px 18px;border-right:1px solid var(--line);}
+  .strip .s:last-child{border-right:0;}
+  .strip .k{font-size:.82rem;color:var(--quiet);display:block;}
+  .strip .v{font-family:var(--cond);font-weight:600;font-size:1.9rem;line-height:1.1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .strip .v .was{font-size:1.1rem;color:var(--y25);}
+  .strip .v .arrow{font-size:1rem;color:var(--quiet);}
+  .strip .v .now{color:var(--y26);}
+  .strip .d{font-size:.84rem;font-weight:500;}
+  .d.pos{color:var(--up);} .d.neg{color:var(--down);} .d.flat{color:var(--quiet);}
+
+  /* ---------- BOARD ---------- */
+  .board{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-width:0;scroll-margin-top:16px;}
+  .tile .hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 18px;border-bottom:1px solid var(--line);}
+  .tile h2{font-family:var(--cond);font-weight:600;font-size:1.3rem;margin:0;line-height:1.1;}
+  .tile .sub{font-size:.85rem;color:var(--quiet);}
+  .tile .bd{padding:16px 18px 18px;}
+  .span-12{grid-column:1 / -1;}
+  .span-7{grid-column:span 7;}
+  .span-5{grid-column:span 5;}
+  .span-6{grid-column:span 6;}
+
+  /* sort control */
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .seg button{
+    font:inherit;font-size:.85rem;font-weight:500;color:var(--muted);
+    background:var(--panel);border:0;border-right:1px solid var(--line);padding:6px 12px;cursor:pointer;
+  }
+  .seg button:last-child{border-right:0;}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff;}
+
+  /* ---------- ALL CANDY CHART ---------- */
+  .all{columns:2;column-gap:36px;}
+  .row{break-inside:avoid;display:grid;grid-template-columns:150px 1fr;align-items:center;gap:12px;padding:5px 0;border-bottom:1px solid var(--well);}
+  .row .nm{font-size:.9rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bars{display:flex;flex-direction:column;gap:3px;}
+  .bar{display:flex;align-items:center;gap:6px;height:11px;}
+  .bar .f{height:100%;border-radius:0 3px 3px 0;min-width:2px;transition:width .5s ease;}
+  .bar .f.y25{background:var(--y25);}
+  .bar .f.y26{background:var(--y26);}
+  .bar .f.zero{background:transparent;box-shadow:inset 0 0 0 1px var(--line);min-width:6px;}
+  .bar .n{font-size:.75rem;color:var(--muted);line-height:1;}
+  .row .chg{font-size:.72rem;font-weight:600;margin-left:4px;}
+
+  /* ---------- MOVERS ---------- */
+  .movers{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+  .mcol h3{font-family:var(--cond);font-weight:600;font-size:1rem;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .mcol.down{border-right:1px solid var(--line);padding-right:16px;}
+  .mcol.up{padding-left:16px;}
+  .mrow{display:grid;align-items:center;gap:8px;padding:5px 0;font-size:.88rem;}
+  .mcol.down .mrow{grid-template-columns:1fr 110px;}
+  .mcol.up .mrow{grid-template-columns:110px 1fr;}
+  .mcol.down .mrow .nm{text-align:right;}
+  .mtrack{display:flex;height:14px;}
+  .mcol.down .mtrack{justify-content:flex-end;}
+  .mtrack .f{height:100%;}
+  .mcol.down .mtrack .f{background:var(--down);border-radius:3px 0 0 3px;}
+  .mcol.up .mtrack .f{background:var(--up);border-radius:0 3px 3px 0;}
+  .mval{font-size:.78rem;font-weight:600;padding:0 5px;line-height:14px;}
+  .mcol.down .mval{color:var(--down);}
+  .mcol.up .mval{color:var(--up);}
+
+  /* ---------- CATEGORY STACKS ---------- */
+  .stack{margin:0 0 18px;}
+  .stack .lbl{display:flex;justify-content:space-between;font-size:.88rem;font-weight:600;margin-bottom:6px;}
+  .stack .lbl span:last-child{color:var(--quiet);font-weight:500;}
+  .stack .lbl .yr25{color:var(--y25);} .stack .lbl .yr26{color:var(--y26);}
+  .sbar{display:flex;height:34px;border-radius:6px;overflow:hidden;}
+  .sbar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:.78rem;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap;}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:6px;font-size:.86rem;}
+  .legend div{display:flex;align-items:center;gap:8px;}
+  .legend i{width:12px;height:12px;border-radius:3px;flex:none;}
+  .legend b{font-weight:600;margin-left:auto;}
+  .note{font-size:.82rem;color:var(--quiet);margin:14px 0 0;}
+
+  /* brand face-off */
+  .brands{display:flex;flex-direction:column;gap:14px;}
+  .brand .top-l{display:flex;justify-content:space-between;font-size:.9rem;font-weight:600;margin-bottom:5px;}
+  .brand .top-l span:last-child{font-weight:500;color:var(--muted);}
+
+  /* ---------- TALKING POINTS ---------- */
+  .points{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap);counter-reset:pt;}
+  .points li{
+    background:var(--well);border-radius:6px;padding:14px 16px 14px 52px;position:relative;counter-increment:pt;
+  }
+  .points li::before{
+    content:counter(pt);position:absolute;left:14px;top:12px;
+    width:26px;height:26px;border-radius:50%;background:var(--y26);color:#fff;
+    font-family:var(--cond);font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center;
+  }
+  .points h3{font-family:var(--cond);font-weight:600;font-size:1.12rem;margin:0 0 4px;line-height:1.2;}
+  .points p{margin:0;color:var(--muted);font-size:.93rem;}
+
+  /* ---------- TABLE ---------- */
+  .tablewrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--well);}
+  th:first-child,td:first-child{text-align:left;}
+  th{font-family:var(--cond);font-weight:600;font-size:.95rem;color:var(--muted);border-bottom:1px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap;}
+  th[aria-sort="ascending"]::after{content:" ▲";font-size:.7em;}
+  th[aria-sort="descending"]::after{content:" ▼";font-size:.7em;}
+  td.c25{color:var(--y25);font-weight:500;} td.c26{color:var(--y26);font-weight:500;}
+  tfoot td{font-weight:600;border-top:1px solid var(--line);border-bottom:0;}
+  .cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle;}
+
+  /* originals */
+  .orig{display:flex;gap:var(--gap);flex-wrap:wrap;}
+  .orig a{
+    flex:1;min-width:220px;display:flex;justify-content:space-between;align-items:center;
+    border:1px solid var(--line);border-radius:6px;padding:14px 16px;font-weight:500;
+  }
+  .orig a:hover{border-color:var(--ink);}
+  .orig a span:last-child{color:var(--quiet);font-size:.85rem;}
+
+  footer{margin-top:36px;border-top:1px solid var(--line);}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px 28px;padding:22px 0 40px;font-size:.9rem;color:var(--muted);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1000px){
+    .span-7,.span-5,.span-6{grid-column:1 / -1;}
+    .all{columns:1;}
+    .strip{grid-template-columns:1fr 1fr;}
+    .strip .s:nth-child(2){border-right:0;}
+    .strip .s:nth-child(-n+2){border-bottom:1px solid var(--line);}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 16px;}
+    .points{grid-template-columns:1fr;}
+    .row{grid-template-columns:118px 1fr;}
+    .movers{grid-template-columns:1fr;}
+    .mcol.down{border-right:0;padding-right:0;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px;}
+    .mcol.up{padding-left:0;}
+    .mcol.down .mrow{grid-template-columns:110px 1fr;}
+    .mcol.down .mrow .nm{text-align:left;order:-1;}
+    .mcol.down .mtrack{justify-content:flex-start;flex-direction:row-reverse;}
+    .mcol.down .mtrack .f{border-radius:0 3px 3px 0;}
+    .legend{grid-template-columns:1fr;}
+    .id svg{width:46px;height:46px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="index.html">← KD3CLW homepage</a>
+
+  <header class="top">
+    <div class="id">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 14c-2-5 1-9 5-10" fill="none" stroke="#3d6b2a" stroke-width="3.5" stroke-linecap="round"/>
+        <ellipse cx="20" cy="38" rx="13" ry="18" fill="#c9540c"/>
+        <ellipse cx="44" cy="38" rx="13" ry="18" fill="#c9540c"/>
+        <ellipse cx="32" cy="38" rx="14" ry="20" fill="#e2650f"/>
+        <path d="M21 33l6-6 4 6zM43 33l-6-6-4 6z" fill="#0f1a24"/>
+        <path d="M19 43c4 6 22 6 26 0l-4 2-3-3-3 3-3-3-3 3-3-3-3 3z" fill="#0f1a24"/>
+      </svg>
+      <div>
+        <h1>Halloween Tracker</h1>
+        <p>Every piece of the kids' trick-or-treat haul, counted and compared year over year.</p>
+      </div>
+    </div>
+    <div class="key" aria-label="Year colors">
+      <span><i style="background:var(--y25)"></i>2025</span>
+      <span><i style="background:var(--y26)"></i>2026</span>
+    </div>
+  </header>
+
+  <section class="strip" id="stats" aria-label="Headline numbers"></section>
+
+  <main class="board">
+
+    <!-- All candy -->
+    <article class="tile span-12" id="all">
+      <div class="hd">
+        <div><h2>Every candy, both years</h2><span class="sub">Bars scaled to the biggest single count (Reese's, 43)</span></div>
+        <div class="seg" role="group" aria-label="Sort candy">
+          <button type="button" data-sort="y26" aria-pressed="true">Most in 2026</button>
+          <button type="button" data-sort="chg" aria-pressed="false">Biggest change</button>
+          <button type="button" data-sort="az" aria-pressed="false">A–Z</button>
+        </div>
+      </div>
+      <div class="bd"><div class="all" id="allChart"></div></div>
+    </article>
+
+    <!-- Movers -->
+    <article class="tile span-7" id="movers">
+      <div class="hd"><div><h2>Biggest movers</h2><span class="sub">Change in pieces, 2025 → 2026</span></div></div>
+      <div class="bd"><div class="movers" id="moverChart"></div></div>
+    </article>
+
+    <!-- Categories + brands -->
+    <article class="tile span-5" id="mix">
+      <div class="hd"><div><h2>What the bag was made of</h2><span class="sub">Share of each year's haul</span></div></div>
+      <div class="bd">
+        <div id="catChart"></div>
+        <div class="legend" id="catLegend"></div>
+        <p class="note">Salty snacks nearly doubled while chocolate's share slipped a little, even though there was more chocolate overall.</p>
+      </div>
+    </article>
+
+    <article class="tile span-6" id="brands">
+      <div class="hd"><div><h2>Hershey vs Mars</h2><span class="sub">Pieces from each candy maker (US brands)</span></div></div>
+      <div class="bd">
+        <div class="brands" id="brandChart"></div>
+        <p class="note">Hershey: Reese's, Kit Kat, Hershey's, York, Whoppers, Milk Duds, Rolo, Almond Joy, Twizzlers. Mars: Snickers, M&amp;Ms, Twix, Milky Way, Skittles, Starburst.</p>
+      </div>
+    </article>
+
+    <article class="tile span-6" id="topthree">
+      <div class="hd"><div><h2>How concentrated was the haul?</h2><span class="sub">Share held by each year's top 3</span></div></div>
+      <div class="bd" id="topChart"></div>
+    </article>
+
+    <!-- Talking points -->
+    <article class="tile span-12" id="points">
+      <div class="hd"><h2>Talking points</h2></div>
+      <div class="bd">
+        <ol class="points">
+          <li><h3>Reese's is still king, but losing its grip</h3><p>Top item both years, yet the only big name that went down while the total went up. Nearly 1 in 5 pieces in 2025; about 1 in 8 this year.</p></li>
+          <li><h3>The Hershey's Bar was the breakout star</h3><p>From 11 to 31, nearly triple, jumping from mid-pack to #2. Somebody on the route bought a whole case.</p></li>
+          <li><h3>The Whoppers house</h3><p>Whoppers went from 1 to 12, a 12x increase. Almost certainly one generous neighbor rather than a trend.</p></li>
+          <li><h3>The haul got more even</h3><p>The top three made up 37.5% of everything in 2025, but only 31% in 2026. More variety, less dominance by the usual favorites.</p></li>
+          <li><h3>Salty snacks nearly doubled</h3><p>Goldfish, Cheeseballs, Pretzels, Doritos and Chex Mix went from 17 pieces to 31, led by Cheeseballs (3 → 12) and Doritos (1 → 6).</p></li>
+          <li><h3>Mars had a rough year on chocolate</h3><p>Snickers, M&amp;Ms and Twix all dropped. Mars' fruity side went the other way: Starburst 2 → 9 and Skittles 1 → 5.</p></li>
+          <li><h3>Hershey's grip tightened</h3><p>Everything Hershey makes went from about 39% of the haul to 43%. Fitting for a Pennsylvania trick-or-treat route.</p></li>
+          <li><h3>Fruit Snacks crashed</h3><p>From 14 to 6, the biggest drop of anything. Lollipops slipped too, from 20 to 15.</p></li>
+          <li><h3>The neighborhood got fancier and healthier</h3><p>Ghirardelli showed up for the first time, applesauce pouches tripled, and Rice Krispy Treats more than tripled (6 → 19).</p></li>
+          <li><h3>Who disappeared</h3><p>Sour Gummy Worms, Cheeto Puffs and Hard Fruity Candy dropped off, and Nerds Gummy Clusters went from 4 to zero. York Mints and Chex Mix were new arrivals. Rolo, Pretzels and Almond Joy came in at exactly the same count both years.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Data table -->
+    <article class="tile span-12" id="data">
+      <div class="hd"><div><h2>The full count</h2><span class="sub">Click a column to sort</span></div></div>
+      <div class="bd">
+        <div class="tablewrap">
+          <table id="dataTable">
+            <thead><tr>
+              <th data-k="name">Candy</th>
+              <th data-k="y25">2025</th>
+              <th data-k="y26">2026</th>
+              <th data-k="chg">Change</th>
+            </tr></thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+        <p class="note">* The 2026 sheet has a row labeled only with a backtick (`) in the spot where Nerds was in 2025, so it's probably Nerds with a typo. It's kept separate here to match the sheet.</p>
+      </div>
+    </article>
+
+    <!-- Originals -->
+    <article class="tile span-12" id="originals">
+      <div class="hd"><h2>Original tally sheets</h2></div>
+      <div class="bd">
+        <div class="orig">
+          <a href="halloween/2025.html"><span>2025 tally sheet</span><span>35 types · 224 pieces</span></a>
+          <a href="halloween/2026.html"><span>2026 tally sheet</span><span>34 types · 300 pieces</span></a>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <footer>
+    <div class="foot">
+      <span>KD3CLW · Halloween Tracker</span>
+      <a href="index.html">Back to the homepage</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  /* name, category, maker, 2025, 2026 */
+  var RAW = [
+    ["Reese's","choc","Hershey",43,38],
+    ["Kit Kats","choc","Hershey",21,25],
+    ["Hershey's Bar","choc","Hershey",11,31],
+    ["Snickers","choc","Mars",10,6],
+    ["M&Ms (Plain)","choc","Mars",17,12],
+    ["Twix","choc","Mars",8,6],
+    ["Milky Way","choc","Mars",7,9],
+    ["Rolo","choc","Hershey",3,3],
+    ["Milk Duds","choc","Hershey",3,5],
+    ["Whoppers","choc","Hershey",1,12],
+    ["Almond Joy","choc","Hershey",2,2],
+    ["Crunch","choc","",3,4],
+    ["Butterfinger","choc","",1,2],
+    ["York Mints","choc","Hershey",0,6],
+    ["Ghirardelli","choc","",0,6],
+    ["Lollipops","fruity","",20,15],
+    ["Sour Patch Kids","fruity","",6,8],
+    ["Starbursts","fruity","Mars",2,9],
+    ["Skittles","fruity","Mars",1,5],
+    ["Twizzlers","fruity","Hershey",4,8],
+    ["Smarties","fruity","",1,7],
+    ["Sweet Tarts","fruity","",2,6],
+    ["Air Heads","fruity","",3,5],
+    ["Daffins","fruity","",2,3],
+    ["Sour Gummy Worms","fruity","",2,0],
+    ["Nerds","fruity","",2,0],
+    ["Nerds Gummy Clusters","fruity","",4,0],
+    ["Hard Fruity Candy","fruity","",4,0],
+    ["Unlabeled row (`)*","fruity","",0,1],
+    ["Goldfish","salty","",3,4],
+    ["Cheeseballs","salty","",3,12],
+    ["Pretzels","salty","",7,7],
+    ["Doritos","salty","",1,6],
+    ["Cheeto Puffs","salty","",3,0],
+    ["Chex Mix","salty","",0,2],
+    ["Rice Krispy Treats","treat","",6,19],
+    ["Oreos","treat","",3,7],
+    ["Fruit Snacks","treat","",14,6],
+    ["Applesauce Pouches","treat","",1,3]
+  ];
+  var CATS = {
+    choc:{label:"Chocolate",color:"var(--c-choc)"},
+    fruity:{label:"Fruity & sour",color:"var(--c-fruity)"},
+    salty:{label:"Salty snacks",color:"var(--c-salty)"},
+    treat:{label:"Treats & snacks",color:"var(--c-treat)"}
+  };
+  var D = RAW.map(function(r){ return {name:r[0],cat:r[1],maker:r[2],y25:r[3],y26:r[4],chg:r[4]-r[3]}; });
+
+  function sum(arr,k){ return arr.reduce(function(a,d){ return a + d[k]; },0); }
+  function pct(a,b){ return (a/b*100); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function signed(n){ return n>0 ? '+'+n : String(n); }
+  function cls(n){ return n>0 ? 'pos' : (n<0 ? 'neg' : 'flat'); }
+
+  var T25 = sum(D,'y25'), T26 = sum(D,'y26');
+  var types25 = D.filter(function(d){return d.y25>0;}).length;
+  var types26 = D.filter(function(d){return d.y26>0;}).length;
+  var top25 = D.slice().sort(function(a,b){return b.y25-a.y25;})[0];
+  var top26 = D.slice().sort(function(a,b){return b.y26-a.y26;})[0];
+
+  /* ---------- headline strip ---------- */
+  var stats = [
+    {k:"Total pieces", was:T25, now:T26, d:signed(T26-T25)+" ("+signed(Math.round(pct(T26-T25,T25)))+"%)", c:cls(T26-T25)},
+    {k:"Candy types", was:types25, now:types26, d:signed(types26-types25)+" type", c:cls(types26-types25)},
+    {k:"#1 candy", was:top25.name, now:top26.name, d:top25.y25+" → "+top26.y26+" pieces", c:"flat", text:true},
+    {k:"Reese's share of the bag", was:Math.round(pct(D[0].y25,T25))+"%", now:Math.round(pct(D[0].y26,T26))+"%", d:"Still #1, smaller slice", c:"neg"}
+  ];
+  document.getElementById('stats').innerHTML = stats.map(function(s){
+    var v = s.text
+      ? '<span class="now">'+esc(s.now)+'</span>'
+      : '<span class="was">'+esc(s.was)+'</span><span class="arrow">→</span><span class="now">'+esc(s.now)+'</span>';
+    return '<div class="s"><span class="k">'+s.k+'</span><span class="v">'+v+'</span><span class="d '+s.c+'">'+esc(s.d)+'</span></div>';
+  }).join('');
+
+  /* ---------- every candy ---------- */
+  var MAX = Math.max.apply(null, D.map(function(d){return Math.max(d.y25,d.y26);}));
+  function bar(v,y){
+    var w = v===0 ? 0 : Math.max(pct(v,MAX),1.5);
+    return '<div class="bar"><div class="f '+y+(v===0?' zero':'')+'" style="width:'+(v===0?'6px':w+'%')+'"></div><span class="n">'+v+'</span></div>';
+  }
+  function renderAll(mode){
+    var rows = D.slice();
+    if(mode==='y26') rows.sort(function(a,b){ return b.y26-a.y26 || b.y25-a.y25; });
+    else if(mode==='chg') rows.sort(function(a,b){ return b.chg-a.chg || a.name.localeCompare(b.name); });
+    else rows.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    document.getElementById('allChart').innerHTML = rows.map(function(d){
+      return '<div class="row"><span class="nm" title="'+esc(d.name)+'">'+esc(d.name)+
+        ' <span class="chg d '+cls(d.chg)+'">'+(d.chg===0?'=':signed(d.chg))+'</span></span>'+
+        '<div class="bars">'+bar(d.y25,'y25')+bar(d.y26,'y26')+'</div></div>';
+    }).join('');
+  }
+  var segBtns = document.querySelectorAll('.seg button');
+  Array.prototype.forEach.call(segBtns,function(b){
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(segBtns,function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); });
+      renderAll(b.getAttribute('data-sort'));
+    });
+  });
+  renderAll('y26');
+
+  /* ---------- movers ---------- */
+  var ups = D.filter(function(d){return d.chg>0;}).sort(function(a,b){return b.chg-a.chg;}).slice(0,8);
+  var downs = D.filter(function(d){return d.chg<0;}).sort(function(a,b){return a.chg-b.chg;}).slice(0,8);
+  var mMax = Math.max(ups[0].chg, -downs[0].chg);
+  function mrows(list,dir){
+    return list.map(function(d){
+      var w = pct(Math.abs(d.chg),mMax);
+      var track = dir==='down'
+        ? '<div class="mtrack"><span class="mval">'+d.chg+'</span><div class="f" style="width:'+w+'%"></div></div>'
+        : '<div class="mtrack"><div class="f" style="width:'+w+'%"></div><span class="mval">+'+d.chg+'</span></div>';
+      return dir==='down'
+        ? '<div class="mrow">'+track+'<span class="nm">'+esc(d.name)+'</span></div>'
+        : '<div class="mrow"><span class="nm">'+esc(d.name)+'</span>'+track+'</div>';
+    }).join('');
+  }
+  document.getElementById('moverChart').innerHTML =
+    '<div class="mcol down"><h3>Fewer</h3>'+mrows(downs,'down')+'</div>'+
+    '<div class="mcol up"><h3>More</h3>'+mrows(ups,'up')+'</div>';
+
+  /* ---------- categories ---------- */
+  var order = ['choc','fruity','salty','treat'];
+  function catTotals(k){
+    var t = {}; order.forEach(function(c){ t[c]=0; });
+    D.forEach(function(d){ t[d.cat]+=d[k]; });
+    return t;
+  }
+  var c25 = catTotals('y25'), c26 = catTotals('y26');
+  function stack(year,t,total,cl){
+    return '<div class="stack"><div class="lbl"><span class="'+cl+'">'+year+'</span><span>'+total+' pieces</span></div><div class="sbar">'+
+      order.map(function(c){
+        var p = pct(t[c],total);
+        return '<div style="width:'+p+'%;background:'+CATS[c].color+'" title="'+CATS[c].label+': '+t[c]+'">'+(p>=7?Math.round(p)+'%':'')+'</div>';
+      }).join('')+'</div></div>';
+  }
+  document.getElementById('catChart').innerHTML = stack('2025',c25,T25,'yr25') + stack('2026',c26,T26,'yr26');
+  document.getElementById('catLegend').innerHTML = order.map(function(c){
+    return '<div><i style="background:'+CATS[c].color+'"></i>'+CATS[c].label+'<b>'+c25[c]+' → '+c26[c]+'</b></div>';
+  }).join('');
+
+  /* ---------- brands ---------- */
+  function makerSum(m,k){ return sum(D.filter(function(d){return d.maker===m;}),k); }
+  var brands = [
+    {n:"Hershey", a:makerSum('Hershey','y25'), b:makerSum('Hershey','y26')},
+    {n:"Mars", a:makerSum('Mars','y25'), b:makerSum('Mars','y26')},
+    {n:"Everyone else", a:T25-makerSum('Hershey','y25')-makerSum('Mars','y25'), b:T26-makerSum('Hershey','y26')-makerSum('Mars','y26')}
+  ];
+  var bMax = Math.max.apply(null, brands.map(function(x){return Math.max(x.a,x.b);}));
+  document.getElementById('brandChart').innerHTML = brands.map(function(x){
+    function bb(v,t,y){ return '<div class="bar" style="height:16px"><div class="f '+y+'" style="width:'+(pct(v,bMax)*0.8)+'%"></div><span class="n" style="white-space:nowrap">'+v+' · '+Math.round(pct(v,t))+'%</span></div>'; }
+    return '<div class="brand"><div class="top-l"><span>'+x.n+'</span><span class="d '+cls(x.b-x.a)+'">'+signed(x.b-x.a)+' pieces</span></div>'+
+      '<div class="bars" style="gap:4px">'+bb(x.a,T25,'y25')+bb(x.b,T26,'y26')+'</div></div>';
+  }).join('');
+
+  /* ---------- top three concentration ---------- */
+  function topN(k){ return D.slice().sort(function(a,b){return b[k]-a[k];}).slice(0,3); }
+  function concBlock(year,k,total,cl,color){
+    var t = topN(k), s = sum(t,k), p = pct(s,total);
+    var segs = t.map(function(d,i){
+      var op = [1,.75,.5][i];
+      return '<div style="width:'+pct(d[k],total)+'%;background:'+color+';opacity:'+op+'" title="'+esc(d.name)+': '+d[k]+'">'+(pct(d[k],total)>=8?esc(d.name.replace(" Bar","")):'')+'</div>';
+    }).join('');
+    return '<div class="stack"><div class="lbl"><span class="'+cl+'">'+year+': '+p.toFixed(1)+'% from the top 3</span><span>'+t.map(function(d){return esc(d.name)+' '+d[k];}).join(' · ')+'</span></div>'+
+      '<div class="sbar" style="background:var(--well)">'+segs+'</div></div>';
+  }
+  document.getElementById('topChart').innerHTML =
+    concBlock('2025','y25',T25,'yr25','var(--y25)') + concBlock('2026','y26',T26,'yr26','var(--y26)') +
+    '<p class="note" style="margin-top:4px">A smaller share for the top three means the bag was spread across more kinds of candy.</p>';
+
+  /* ---------- table ---------- */
+  var tb = document.querySelector('#dataTable tbody');
+  var sortK = 'y26', sortDir = -1;
+  function renderTable(){
+    var rows = D.slice().sort(function(a,b){
+      var x=a[sortK], y=b[sortK];
+      if(typeof x==='string') return x.localeCompare(y)*sortDir;
+      return (x-y)*sortDir || a.name.localeCompare(b.name);
+    });
+    tb.innerHTML = rows.map(function(d){
+      return '<tr><td><span class="cat-dot" style="background:'+CATS[d.cat].color+'"></span>'+esc(d.name)+'</td>'+
+        '<td class="c25">'+d.y25+'</td><td class="c26">'+d.y26+'</td>'+
+        '<td class="d '+cls(d.chg)+'">'+(d.chg===0?'—':signed(d.chg))+'</td></tr>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#dataTable th'),function(th){
+      th.setAttribute('aria-sort', th.getAttribute('data-k')===sortK ? (sortDir>0?'ascending':'descending') : 'none');
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('#dataTable th'),function(th){
+    th.addEventListener('click',function(){
+      var k = th.getAttribute('data-k');
+      if(k===sortK){ sortDir = -sortDir; } else { sortK = k; sortDir = (k==='name') ? 1 : -1; }
+      renderTable();
+    });
+  });
+  document.querySelector('#dataTable tfoot').innerHTML =
+    '<tr><td>Total</td><td class="c25">'+T25+'</td><td class="c26">'+T26+'</td><td class="d pos">'+signed(T26-T25)+'</td></tr>';
+  renderTable();
+})();
+</script>
+</body>
+</html>
