@@ -26,6 +26,7 @@
     --shipped:#2f5fd0;
     --building:#c98200;
     --ongoing:#7a4fd1;
+    --seasonal:#e2650f;
 
     --sans:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
     --cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
@@ -75,7 +76,7 @@
   /* ---------- STATUS STRIP ---------- */
   .strip{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(6,1fr);
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:8px;
@@ -103,6 +104,9 @@
   .s-shipped{--s:var(--shipped);}
   .s-building{--s:var(--building);}
   .s-ongoing{--s:var(--ongoing);}
+  .s-seasonal{--s:var(--seasonal);}
+  /* seasonal = little pumpkin-ish diamond */
+  .s-seasonal .state::before{border-radius:2px;transform:rotate(45deg);width:7px;height:7px;}
   /* building = ring, ongoing = hollow: readable without color */
   .s-building .state::before{background:transparent;box-shadow:inset 0 0 0 2px var(--s);}
   .s-ongoing .state::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--s);width:9px;height:9px;border-radius:2px;}
@@ -173,6 +177,28 @@
   .wdg img{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;transition:border-color .15s ease;}
   .wdg:hover img{border-color:var(--muted);}
 
+  /* Halloween tracker banner */
+  .span-12{grid-column:1 / -1;}
+  .hw{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:center;}
+  .hw p{margin:0 0 14px;}
+  .hw .big{font-family:var(--cond);font-weight:600;font-size:2.2rem;line-height:1;margin:0 0 6px;}
+  .hw .big .was{color:#6b4fa8;font-size:1.4rem;}
+  .hw .big .now{color:var(--seasonal);}
+  .hw .big .ar{color:var(--quiet);font-size:1.2rem;margin:0 6px;}
+  .hw .delta{font-size:.88rem;font-weight:500;color:var(--live);margin:0 0 14px;display:block;}
+  .hw-chart{display:flex;flex-direction:column;gap:9px;}
+  .hw-row{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:10px;font-size:.86rem;}
+  .hw-row .nm{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hw-bars{display:flex;flex-direction:column;gap:3px;}
+  .hw-bar{display:flex;align-items:center;gap:6px;height:9px;font-size:.72rem;color:var(--muted);line-height:1;}
+  .hw-bar i{display:block;height:100%;border-radius:0 3px 3px 0;}
+  .hw-bar.a i{background:#6b4fa8;}
+  .hw-bar.b i{background:var(--seasonal);}
+  .hw-key{display:flex;gap:14px;font-size:.78rem;color:var(--muted);margin-top:2px;}
+  .hw-key span{display:inline-flex;align-items:center;gap:6px;}
+  .hw-key i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+  .hw-cta{font-weight:600;}
+
   /* ---------- FOOTER ---------- */
   footer{margin-top:36px;border-top:1px solid var(--line);}
   .foot{
@@ -186,7 +212,8 @@
     .span-8,.side{grid-column:1 / -1;}
     .side{display:grid;grid-template-columns:1fr 1fr;}
     .span-4{grid-column:span 6;}
-    .span-4:last-child{grid-column:1 / -1;}
+    #wardriving{grid-column:1 / -1;}
+    .hw{grid-template-columns:1fr;gap:20px;}
     .strip{grid-template-columns:repeat(3,1fr);}
     .strip a{border-bottom:1px solid var(--line);}
   }
@@ -196,7 +223,7 @@
     .clocks{gap:22px;}
     .clock{align-items:flex-start;}
     .side{grid-template-columns:1fr;}
-    .span-4,.span-4:last-child{grid-column:1 / -1;}
+    .span-4,#wardriving{grid-column:1 / -1;}
     .strip{grid-template-columns:1fr 1fr;}
     .map,.map iframe{min-height:420px;}
   }
@@ -226,6 +253,7 @@
     <a href="#hambands" class="s-shipped"><span class="n">HamBands</span><span class="state">Shipped</span></a>
     <a href="#balloon" class="s-building"><span class="n">Pico balloon</span><span class="state">Building</span></a>
     <a href="#wardriving" class="s-ongoing"><span class="n">Wardriving</span><span class="state">Ongoing</span></a>
+    <a href="#halloween" class="s-seasonal"><span class="n">Halloween</span><span class="state">Seasonal</span></a>
   </nav>
 
   <main class="board">
@@ -314,6 +342,29 @@
       </div>
     </article>
 
+    <!-- Halloween tracker teaser -->
+    <article class="tile span-12 s-seasonal" id="halloween">
+      <div class="hd"><h2>Halloween tracker</h2><span class="state">Seasonal</span></div>
+      <div class="bd">
+        <div class="hw">
+          <div>
+            <p class="big"><span class="was">224</span><span class="ar">→</span><span class="now">300</span></p>
+            <span class="delta">+76 pieces (+34%) vs last year</span>
+            <p>Every year the kids' trick-or-treat haul gets counted piece by piece. Reese's held the #1 spot again, Hershey's Bars nearly tripled, and one house went all-in on Whoppers. Charts, talking points and the original tally sheets are on the tracker.</p>
+            <div class="links"><a class="hw-cta" href="halloween.html">Open the Halloween tracker →</a></div>
+          </div>
+          <div class="hw-chart" role="img" aria-label="Top candies, 2025 vs 2026: Reese's 43 to 38, Hershey's Bar 11 to 31, Kit Kats 21 to 25, Rice Krispy Treats 6 to 19, Whoppers 1 to 12">
+            <div class="hw-row"><span class="nm">Reese's</span><div class="hw-bars"><span class="hw-bar a"><i style="width:100%"></i>43</span><span class="hw-bar b"><i style="width:88%"></i>38</span></div></div>
+            <div class="hw-row"><span class="nm">Hershey's Bar</span><div class="hw-bars"><span class="hw-bar a"><i style="width:26%"></i>11</span><span class="hw-bar b"><i style="width:72%"></i>31</span></div></div>
+            <div class="hw-row"><span class="nm">Kit Kats</span><div class="hw-bars"><span class="hw-bar a"><i style="width:49%"></i>21</span><span class="hw-bar b"><i style="width:58%"></i>25</span></div></div>
+            <div class="hw-row"><span class="nm">Rice Krispy</span><div class="hw-bars"><span class="hw-bar a"><i style="width:14%"></i>6</span><span class="hw-bar b"><i style="width:44%"></i>19</span></div></div>
+            <div class="hw-row"><span class="nm">Whoppers</span><div class="hw-bars"><span class="hw-bar a"><i style="width:2.5%"></i>1</span><span class="hw-bar b"><i style="width:28%"></i>12</span></div></div>
+            <div class="hw-key"><span><i style="background:#6b4fa8"></i>2025</span><span><i style="background:var(--seasonal)"></i>2026</span></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
   </main>
 
   <footer>
@@ -324,6 +375,7 @@
         <a href="https://github.com/kd3clw" target="_blank" rel="noopener">GitHub</a>
         <a href="https://sondehub.org" target="_blank" rel="noopener">SondeHub</a>
         <a href="https://wdgwars.pl/" target="_blank" rel="noopener">WDGWars</a>
+        <a href="halloween.html">Halloween tracker</a>
         <a href="mailto:taylor.transue@pm.me?subject=Saw%20your%20KD3CLW%20homepage!">Leave a note</a>
       </nav>
     </div>
